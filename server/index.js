@@ -7,7 +7,7 @@ function generateNotes(number = 3) {
     .fill(0)
     .map(() => ({
       id: uuidv4(),
-      content: faker.lorem.text(),
+      content: faker.lorem.paragraphs(8),
       date: new Date(faker.date.recent()).toISOString(),
     }));
 }
@@ -28,6 +28,7 @@ const typeDefs = gql`
 
   type Mutation {
     addNote(content: String, date: String): Note
+    deleteNote(id: String): Note
   }
 `;
 
@@ -46,6 +47,11 @@ const resolvers = {
       };
       notes.push(newNote);
       return newNote;
+    },
+    deleteNote: (obj, { id }) => {
+      const index = notes.findIndex((n) => n.id === id);
+      if (index >= 0) notes.splice(index, 1);
+      return { id };
     },
   },
 };
